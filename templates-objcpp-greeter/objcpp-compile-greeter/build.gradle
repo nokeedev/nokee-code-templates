@@ -1,0 +1,11 @@
+plugins {
+	id 'objective-cpp'
+}
+
+model {
+	components {
+		main(NativeLibrarySpec) {
+			baseName = project.name
+		}
+	}
+}

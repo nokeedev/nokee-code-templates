@@ -1,0 +1,26 @@
+plugins {
+	id 'java-library'
+}
+
+group = 'dev.nokee.templates'
+version = '1.0'
+
+dependencies {
+	api 'dev.gradleplugins:gradle-fixtures-source-elements'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.named('check') {
+	dependsOn {
+		return gradle.includedBuilds.findAll { it.name.startsWith('templates-') }.collect { includedBuild ->
+			return tasks.register("assemble${includedBuild.name.capitalize()}", GradleBuild) { task ->
+				task.dir = includedBuild.projectDir
+				task.tasks = ['assemble']
+			}
+		}
+	}
+}

@@ -1,0 +1,7 @@
+//include 'objc-greeter'
+//include 'objc-greeter-with-optional-feature'
+//include 'objc-greeter-using-foundation-framework'
+//include 'objc-greeter-app'
+//include 'objc-greeter-lib'
+//include 'objc-greeter-test'
+//include 'objc-compile-greeter'

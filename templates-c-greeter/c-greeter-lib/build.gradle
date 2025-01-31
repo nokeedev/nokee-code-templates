@@ -1,0 +1,21 @@
+plugins {
+	id 'c'
+}
+
+model {
+	components {
+		main(NativeLibrarySpec) {
+			baseName = project.name
+			sources {
+				c {
+					exportedHeaders {
+						srcDir "src/main/public"
+					}
+				}
+			}
+			binaries.all {
+				lib project: ':c-greeter', library: 'main'
+			}
+		}
+	}
+}

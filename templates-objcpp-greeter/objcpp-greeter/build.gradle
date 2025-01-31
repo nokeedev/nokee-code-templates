@@ -1,0 +1,18 @@
+plugins {
+	id 'objective-cpp'
+}
+
+model {
+	components {
+		main(NativeLibrarySpec) {
+			baseName = project.name
+			sources {
+				objcpp {
+					exportedHeaders {
+						srcDir "src/main/public"
+					}
+				}
+			}
+		}
+	}
+}

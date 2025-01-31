@@ -1,1 +1,8 @@
 rootProject.name = 'nokee-code-templates'
+
+includeBuild 'templates-c-greeter'
+includeBuild 'templates-cpp-greeter'
+includeBuild 'templates-jni-greeter'
+includeBuild 'templates-objc-greeter'
+includeBuild 'templates-objcpp-greeter'
+includeBuild 'templates-swift-greeter'

@@ -1,0 +1,7 @@
+include 'cpp-greeter'
+include 'cpp-greeter-with-optional-feature'
+include 'cpp-greeter-app'
+include 'cpp-greeter-lib'
+include 'cpp-greeter-test'
+include 'cpp-compile-greeter'
+//include 'google-test-greeter-test'

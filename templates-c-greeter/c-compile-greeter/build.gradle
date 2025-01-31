@@ -1,0 +1,11 @@
+plugins {
+	id 'c'
+}
+
+model {
+	components {
+		main(NativeLibrarySpec) {
+			baseName = project.name
+		}
+	}
+}

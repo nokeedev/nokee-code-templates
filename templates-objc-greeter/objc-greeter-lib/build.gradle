@@ -1,0 +1,21 @@
+plugins {
+	id 'objective-c'
+}
+
+model {
+	components {
+		main(NativeLibrarySpec) {
+			baseName = project.name
+			sources {
+				objc {
+					exportedHeaders {
+						srcDir "src/main/public"
+					}
+				}
+			}
+			binaries.all {
+				lib project: ':objc-greeter', library: 'main'
+			}
+		}
+	}
+}
