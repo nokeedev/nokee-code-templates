@@ -1,13 +1,12 @@
 package dev.nokee.platform.jni.fixtures;
 
-import dev.gradleplugins.fixtures.sources.RegularFileContent;
 import dev.gradleplugins.fixtures.sources.SourceElement;
 import dev.gradleplugins.fixtures.sources.SourceFile;
 import dev.gradleplugins.fixtures.sources.SourceFileElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.gradleplugins.fixtures.sources.nativebase.ObjCFileElement;
+import dev.nokee.platform.Elements;
 import dev.nokee.platform.jni.fixtures.elements.JavaGreeterJUnitTest;
 import dev.nokee.platform.jni.fixtures.elements.JavaNativeLoader;
 import dev.nokee.platform.jni.fixtures.elements.JniLibraryElement;
@@ -52,31 +51,22 @@ public final class JavaJniObjectiveCNSSavePanelLib extends SourceElement impleme
 		return Stream.concat(getJvmSources().getFiles().stream(), getNativeSources().getFiles().stream()).collect(Collectors.toList());
 	}
 
+	@SourceProject(value = "templates-jni-greeter/jni-objc-cocoa", includes = {"src/main/java/com/example/cocoa/NSSavePanel.java"}, properties = {
+		@SourceFileProperty(regex = "^package (com\\.example\\.cocoa);$", name = "package"),
+		@SourceFileProperty(regex = "\"(\\$\\{resourcePath\\}\\$\\{sharedLibraryBaseName\\})\"", name = "libName")
+	})
 	private static class JavaNativeNSSavePanel extends SourceFileElement {
-		private final SourceFile source;
 		private final JavaPackage javaPackage;
 		private final String sharedLibraryBaseName;
 		private final String resourcePath;
 
 		@Override
 		public SourceFile getSourceFile() {
-			return source;
-		}
-
-		@SourceFileLocation(file = "jni-objc-cocoa/src/main/java/com/example/cocoa/NSSavePanel.java", properties = {
-			@SourceFileProperty(regex = "^package (com\\.example\\.cocoa);$", name = "package"),
-			@SourceFileProperty(regex = "\"(\\$\\{resourcePath\\}\\$\\{sharedLibraryBaseName\\})\"", name = "libName")
-		})
-		static class Content extends RegularFileContent {
-			public Content withPackage(JavaPackage javaPackage) {
-				properties.put("package", javaPackage.getName());
-				return this;
-			}
-
-			public Content withLibName(String s) {
-				properties.put("libName", s);
-				return this;
-			}
+			SourceFile result = Elements.sourceFileOf(JavaNativeNSSavePanel.class)
+				.with("package", javaPackage.getName())
+				.with("libName", resourcePath + sharedLibraryBaseName)
+				.getSourceFile();
+			return new SourceFile("java/" + javaPackage.getDirectoryLayout(), result.getName(), result.getContent());
 		}
 
 		public JavaNativeNSSavePanel(JavaPackage javaPackage, String sharedLibraryBaseName) {
@@ -87,7 +77,6 @@ public final class JavaJniObjectiveCNSSavePanelLib extends SourceElement impleme
 			this.javaPackage = javaPackage;
 			this.sharedLibraryBaseName = sharedLibraryBaseName;
 			this.resourcePath = resourcePath;
-			source = new Content().withPackage(javaPackage).withLibName(resourcePath + sharedLibraryBaseName).withPath("java/" + javaPackage.getDirectoryLayout()).getSourceFile();
 		}
 
 		public JavaNativeNSSavePanel withSharedLibraryBaseName(String sharedLibraryBaseName) {
@@ -99,28 +88,23 @@ public final class JavaJniObjectiveCNSSavePanelLib extends SourceElement impleme
 		}
 	}
 
+	@SourceProject(value = "templates-jni-greeter/jni-objc-cocoa", includes = {"src/main/objc/ns_save_panel.m"}, properties = {
+		@SourceFileProperty(regex = "\\s+(Java_com_example_cocoa_NSSavePanel_saveDialog)\\(", name = "methodName"),
+		@SourceFileProperty(regex = "^#include\\s+\"(com_example_cocoa_NSSavePanel\\.h)\"$", name = "jniHeader")
+	})
 	private static class ObjectiveCNSSavePanelJniBinding extends SourceFileElement {
-		private final SourceFile source;
+		private final JavaPackage javaPackage;
 
 		public ObjectiveCNSSavePanelJniBinding(JavaPackage javaPackage) {
-			source = new Content().withPackage(javaPackage).getSourceFile();
+			this.javaPackage = javaPackage;
 		}
 
 		@Override
 		public SourceFile getSourceFile() {
-			return source;
-		}
-
-		@SourceFileLocation(file = "jni-objc-cocoa/src/main/objc/ns_save_panel.m", properties = {
-			@SourceFileProperty(regex = "\\s+(Java_com_example_cocoa_NSSavePanel_saveDialog)\\(", name = "methodName"),
-			@SourceFileProperty(regex = "^#include\\s+\"(com_example_cocoa_NSSavePanel\\.h)\"$", name = "jniHeader")
-		})
-		static class Content extends ObjCFileElement {
-			public Content withPackage(JavaPackage javaPackage) {
-				properties.put("methodName", javaPackage.jniMethodName("NSSavePanel", "saveDialog"));
-				properties.put("jniHeader", javaPackage.jniHeader("NSSavePanel"));
-				return this;
-			}
+			return Elements.sourceFileOf(ObjectiveCNSSavePanelJniBinding.class)
+				.with("methodName", javaPackage.jniMethodName("NSSavePanel", "saveDialog"))
+				.with("jniHeader", javaPackage.jniHeader("NSSavePanel"))
+				.getSourceFile();
 		}
 	}
 }

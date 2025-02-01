@@ -1,35 +1,32 @@
 package dev.nokee.platform.jni.fixtures.elements;
 
-import dev.gradleplugins.fixtures.sources.RegularFileContent;
 import dev.gradleplugins.fixtures.sources.SourceFile;
 import dev.gradleplugins.fixtures.sources.SourceFileElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
+import dev.nokee.platform.Elements;
 
 import static dev.gradleplugins.fixtures.sources.java.JavaPackage.ofPackage;
 
+@SourceProject(value = "templates-jni-greeter/java-jni-app", includes = {"src/main/java/com/example/app/Main.java"}, properties = {
+	@SourceFileProperty(regex = "^package (com\\.example\\.app);$", name = "package")
+})
 public final class JavaMainUsesGreeter extends SourceFileElement implements GreeterElement {
-	private final SourceFile source;
+	private final JavaPackage javaPackage;
 
 	@Override
 	public SourceFile getSourceFile() {
-		return source;
+		SourceFile result = Elements.sourceFileOf(JavaMainUsesGreeter.class)
+			.with("package", javaPackage.getName())
+			.getSourceFile();
+		return new SourceFile("java/" + javaPackage.getDirectoryLayout(), result.getName(), result.getContent());
 	}
 
-	@SourceFileLocation(file = "java-jni-app/src/main/java/com/example/app/Main.java", properties = {
-		@SourceFileProperty(regex = "^package (com\\.example\\.app);$", name = "package")
-	})
-	static class Content extends RegularFileContent {
-		public Content withPackage(JavaPackage javaPackage) {
-			properties.put("package", javaPackage.getName());
-			return this;
-		}
-	}
 
     public JavaMainUsesGreeter() {
 		JavaPackage javaPackage = ofPackage("com.example.app");
-		this.source = new Content().withPackage(javaPackage).withPath("java/" + javaPackage.getDirectoryLayout()).getSourceFile();
+		this.javaPackage = javaPackage;
 	}
 
 	@Override

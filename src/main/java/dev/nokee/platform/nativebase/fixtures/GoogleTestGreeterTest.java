@@ -16,11 +16,11 @@
 
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.CppFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedSourceElement;
 
-@SourceFileLocation(file = "google-test-greeter-test/src/main/cpp/greeter_test.cpp")
-public final class GoogleTestGreeterTest extends CppFileElement {
+@SourceProject("templates-cpp-greeter/google-test-greeter-test")
+public final class GoogleTestGreeterTest extends DelegatedSourceElement {
 	@Override
 	public String getSourceSetName() {
 		return "test";

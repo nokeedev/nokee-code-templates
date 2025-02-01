@@ -1,15 +1,16 @@
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
-import dev.gradleplugins.fixtures.sources.nativebase.SwiftFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedSwiftSourceElement;
+import dev.nokee.platform.Elements;
 
-@SourceFileLocation(file = "swift-greeter-test/src/main/swift/greeter_test.swift", properties = {
+@SourceProject(value = "templates-swift-greeter/swift-greeter-test", includes = {"src/main/swift/greeter_test.swift"}, properties = {
 	@SourceFileProperty(regex = "^import (SwiftGreeter)$", name = "testedModuleName")
 })
-public final class SwiftGreeterTest extends SwiftFileElement {
+public final class SwiftGreeterTest extends DelegatedSwiftSourceElement {
 	public SwiftGreeterTest(String testedModuleName) {
-		properties.put("testedModuleName", testedModuleName);
+		super(Elements.sourceOf(SwiftGreeterTest.class)/*.with("testedModuleName", testedModuleName)*/);
 	}
 
 	@Override

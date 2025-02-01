@@ -17,8 +17,10 @@
 package dev.nokee.platform.jni.fixtures.elements;
 
 
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.SwiftFileElement;
+import dev.gradleplugins.fixtures.sources.SwiftSourceElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedSourceElement;
+import dev.nokee.platform.DelegatedSwiftSourceElement;
 
-@SourceFileLocation(file = "swift-greeter/src/main/swift/greeter.swift")
-public final class SwiftGreeter extends SwiftFileElement {}
+@SourceProject("templates-swift-greeter/swift-greeter")
+public final class SwiftGreeter extends DelegatedSwiftSourceElement {}

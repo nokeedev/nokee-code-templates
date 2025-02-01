@@ -1,11 +1,8 @@
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.NativeSourceFileElement;
 import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceFileElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.CFileElement;
-import dev.gradleplugins.fixtures.sources.nativebase.NativeHeaderFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedNativeLibraryElement;
 import dev.nokee.platform.jni.fixtures.CGreeter;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 
@@ -30,21 +27,6 @@ public final class CGreeterLib extends GreeterImplementationAwareSourceElement {
 		return ofElements(getElementUsingGreeter(), getGreeter(), new CGreeterTest());
 	}
 
-	private static class CGreetUsingGreeter extends NativeSourceFileElement {
-		@Override
-		public SourceFileElement getHeader() {
-			return new Header();
-		}
-
-		@SourceFileLocation(file = "c-greeter-lib/src/main/public/greet_alice.h")
-		static class Header extends NativeHeaderFileElement {}
-
-		@Override
-		public SourceFileElement getSource() {
-			return new Source();
-		}
-
-		@SourceFileLocation(file = "c-greeter-lib/src/main/c/greet_alice.c")
-		static class Source extends CFileElement {}
-	}
+	@SourceProject("templates-c-greeter/c-greeter-lib")
+	public static class CGreetUsingGreeter extends DelegatedNativeLibraryElement {}
 }

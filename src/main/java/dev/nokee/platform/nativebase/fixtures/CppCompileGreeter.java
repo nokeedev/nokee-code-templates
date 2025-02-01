@@ -16,8 +16,8 @@
 
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.CppFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedSourceElement;
 
-@SourceFileLocation(file = "cpp-compile-greeter/src/main/cpp/greeter.cpp")
-public final class CppCompileGreeter extends CppFileElement {}
+@SourceProject("templates-cpp-greeter/cpp-compile-greeter")
+public final class CppCompileGreeter extends DelegatedSourceElement {}

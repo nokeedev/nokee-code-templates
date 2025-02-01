@@ -1,8 +1,8 @@
 package dev.nokee.platform.nativebase.fixtures;
 
 import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.ObjCppFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedSourceElement;
 import dev.nokee.platform.jni.fixtures.ObjectiveCppGreeter;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 
@@ -25,6 +25,6 @@ public final class ObjectiveCppGreeterApp extends GreeterImplementationAwareSour
 		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), getGreeter().as(lib()).as(subproject(subprojectPath)));
 	}
 
-	@SourceFileLocation(file = "objcpp-greeter-app/src/main/objcpp/main.mm")
-	private static class ObjectiveCppMainUsesGreeter extends ObjCppFileElement {}
+	@SourceProject("templates-objcpp-greeter/objcpp-greeter-app")
+	private static class ObjectiveCppMainUsesGreeter extends DelegatedSourceElement {}
 }

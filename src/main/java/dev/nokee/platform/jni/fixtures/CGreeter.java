@@ -17,43 +17,16 @@
 package dev.nokee.platform.jni.fixtures;
 
 import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
-import dev.gradleplugins.fixtures.sources.NativeSourceFileElement;
-import dev.gradleplugins.fixtures.sources.SourceFileElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.CFileElement;
-import dev.gradleplugins.fixtures.sources.nativebase.NativeHeaderFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedNativeLibraryElement;
+import dev.nokee.platform.DelegatedSourceElement;
 
-public final class CGreeter extends NativeSourceFileElement {
-	@Override
-    public SourceFileElement getHeader() {
-		return new Header();
-	}
-
-	@SourceFileLocation(file = "c-greeter/src/main/public/greeter.h")
-	static class Header extends NativeHeaderFileElement {}
-
-	@Override
-	public SourceFileElement getSource() {
-		return new Source();
-	}
-
-	@SourceFileLocation(file = "c-greeter/src/main/c/greeter_impl.c")
-	static class Source extends CFileElement {}
-
+@SourceProject("templates-c-greeter/c-greeter")
+public final class CGreeter extends DelegatedNativeLibraryElement {
 	public NativeLibraryElement withOptionalFeature() {
-		return new NativeSourceFileElement() {
-			@Override
-			public SourceFileElement getHeader() {
-				return CGreeter.this.getHeader();
-			}
-
-			@Override
-			public SourceFileElement getSource() {
-				return new WithOptionalFeatureSource();
-			}
-		};
+		return withSources(new WithOptionalFeatureSource());
 	}
 
-	@SourceFileLocation(file = "c-greeter-with-optional-feature/src/main/c/greeter_impl.c")
-	static class WithOptionalFeatureSource extends CFileElement {}
+	@SourceProject("templates-c-greeter/c-greeter-with-optional-feature")
+	static class WithOptionalFeatureSource extends DelegatedSourceElement {}
 }

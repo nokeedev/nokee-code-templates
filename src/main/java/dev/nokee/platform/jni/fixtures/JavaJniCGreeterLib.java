@@ -2,16 +2,11 @@ package dev.nokee.platform.jni.fixtures;
 
 import dev.gradleplugins.fixtures.sources.SourceElement;
 import dev.gradleplugins.fixtures.sources.SourceFile;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.gradleplugins.fixtures.sources.nativebase.CFileElement;
-import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
-import dev.nokee.platform.jni.fixtures.elements.GreeterJniHeader;
-import dev.nokee.platform.jni.fixtures.elements.JavaGreeterJUnitTest;
-import dev.nokee.platform.jni.fixtures.elements.JavaNativeGreeter;
-import dev.nokee.platform.jni.fixtures.elements.JavaNativeLoader;
-import dev.nokee.platform.jni.fixtures.elements.JniLibraryElement;
+import dev.nokee.platform.Elements;
+import dev.nokee.platform.jni.fixtures.elements.*;
 
 import static dev.gradleplugins.fixtures.sources.NativeElements.lib;
 import static dev.gradleplugins.fixtures.sources.NativeElements.subproject;
@@ -77,6 +72,10 @@ public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceEl
 		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), nativeImplementation.as(lib()).as(subproject(subprojectPath)));
 	}
 
+	@SourceProject(value = "templates-jni-greeter/jni-c-greeter", includes = {"src/main/c/greeter.c"}, properties = {
+		@SourceFileProperty(regex = "^#include\\s+\"(com_example_greeter_Greeter.h)\"$", name = "jniHeader"),
+		@SourceFileProperty(regex = "\\s+(Java_com_example_greeter_Greeter_sayHello)\\(", name = "methodName")
+	})
 	private static class CGreeterJniBinding extends JniBindingElement {
 		private final JavaPackage javaPackage;
 
@@ -86,24 +85,15 @@ public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceEl
 
 		@Override
 		public SourceFile getSourceFile() {
-			return new Source().withPackage(javaPackage).getSourceFile();
-		}
-
-		@SourceFileLocation(file = "jni-c-greeter/src/main/c/greeter.c", properties = {
-			@SourceFileProperty(regex = "^#include\\s+\"(com_example_greeter_Greeter.h)\"$", name = "jniHeader"),
-			@SourceFileProperty(regex = "\\s+(Java_com_example_greeter_Greeter_sayHello)\\(", name = "methodName")
-		})
-		static class Source extends CFileElement {
-			public Source withPackage(JavaPackage javaPackage) {
-				properties.put("jniHeader", javaPackage.jniHeader("Greeter"));
-				properties.put("methodName", javaPackage.jniMethodName("Greeter", "sayHello"));
-				return this;
-			}
+			return Elements.sourceFileOf(CGreeterJniBinding.class)
+				.with("jniHeader", javaPackage.jniHeader("Greeter"))
+				.with("methodName", javaPackage.jniMethodName("Greeter", "sayHello"))
+				.getSourceFile();
 		}
 
 		@Override
 		public SourceFile getJniGeneratedHeaderFile() {
-			return new GreeterJniHeader().withPackage(javaPackage).getSourceFile();
+			return new GreeterJniHeader().withPackage(javaPackage);
 		}
 	}
 }

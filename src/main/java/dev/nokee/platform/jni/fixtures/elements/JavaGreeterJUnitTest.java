@@ -1,30 +1,26 @@
 package dev.nokee.platform.jni.fixtures.elements;
 
-import dev.gradleplugins.fixtures.sources.RegularFileContent;
 import dev.gradleplugins.fixtures.sources.SourceFile;
 import dev.gradleplugins.fixtures.sources.SourceFileElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
+import dev.nokee.platform.Elements;
 
 import static dev.gradleplugins.fixtures.sources.java.JavaPackage.ofPackage;
 
+@SourceProject(value = "templates-jni-greeter/java-jni-greeter", includes = {"src/test/java/com/example/greeter/GreeterTest.java"}, properties = {
+	@SourceFileProperty(regex = "^package (com\\.example\\.greeter);$", name = "package")
+})
 public final class JavaGreeterJUnitTest extends SourceFileElement {
-	private final SourceFile source;
+	private final JavaPackage javaPackage;
 
 	@Override
 	public SourceFile getSourceFile() {
-		return source;
-	}
-
-	@SourceFileLocation(file = "java-jni-greeter/src/test/java/com/example/greeter/GreeterTest.java", properties = {
-		@SourceFileProperty(regex = "^package (com\\.example\\.greeter);$", name = "package")
-	})
-	static class Source extends RegularFileContent {
-		public Source withPackage(JavaPackage javaPackage) {
-			properties.put("package", javaPackage.getName());
-			return this;
-		}
+		SourceFile result = Elements.sourceFileOf(JavaGreeterJUnitTest.class)
+			.with("package", javaPackage.getName())
+			.getSourceFile();
+		return new SourceFile("java/" + javaPackage.getDirectoryLayout(), result.getName(), result.getContent());
 	}
 
 	@Override
@@ -37,7 +33,6 @@ public final class JavaGreeterJUnitTest extends SourceFileElement {
 	}
 
 	public JavaGreeterJUnitTest(JavaPackage javaPackage) {
-		source = new Source().withPackage(javaPackage)
-			.withPath("java/" + javaPackage.getDirectoryLayout()).getSourceFile();
+		this.javaPackage = javaPackage;
 	}
 }

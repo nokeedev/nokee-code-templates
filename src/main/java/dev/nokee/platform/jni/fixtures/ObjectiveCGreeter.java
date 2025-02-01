@@ -17,60 +17,23 @@
 package dev.nokee.platform.jni.fixtures;
 
 import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
-import dev.gradleplugins.fixtures.sources.NativeSourceFileElement;
-import dev.gradleplugins.fixtures.sources.SourceFileElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.NativeHeaderFileElement;
-import dev.gradleplugins.fixtures.sources.nativebase.ObjCFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedNativeLibraryElement;
+import dev.nokee.platform.DelegatedSourceElement;
 
-public final class ObjectiveCGreeter extends NativeSourceFileElement {
-	@Override
-    public SourceFileElement getHeader() {
-		return new Header();
-	}
-
-	@SourceFileLocation(file = "objc-greeter/src/main/public/greeter.h")
-	static class Header extends NativeHeaderFileElement {}
-
-	@Override
-	public SourceFileElement getSource() {
-		return new Source();
-	}
-
-	@SourceFileLocation(file = "objc-greeter/src/main/objc/greeter_impl.m")
-	static class Source extends ObjCFileElement {}
-
+@SourceProject("templates-objc-greeter/objc-greeter")
+public final class ObjectiveCGreeter extends DelegatedNativeLibraryElement {
 	public NativeLibraryElement withFoundationFrameworkImplementation() {
-		return new NativeSourceFileElement() {
-			@Override
-			public SourceFileElement getHeader() {
-				return ObjectiveCGreeter.this.getHeader();
-			}
-
-			@Override
-			public SourceFileElement getSource() {
-				return new WithFoundationFrameworkSource();
-			}
-		};
+		return withSources(new WithFoundationFrameworkSource());
 	}
 
-	@SourceFileLocation(file = "objc-greeter-using-foundation-framework/src/main/objc/greeter_impl.m")
-	static class WithFoundationFrameworkSource extends ObjCFileElement {}
+	@SourceProject("templates-objc-greeter/objc-greeter-using-foundation-framework")
+	static class WithFoundationFrameworkSource extends DelegatedSourceElement {}
 
 	public NativeLibraryElement withOptionalFeature() {
-		return new NativeSourceFileElement() {
-			@Override
-			public SourceFileElement getHeader() {
-				return ObjectiveCGreeter.this.getHeader();
-			}
-
-			@Override
-			public SourceFileElement getSource() {
-				return new WithOptionalFeatureSource();
-			}
-		};
+		return withSources(new WithOptionalFeatureSource());
 	}
 
-	@SourceFileLocation(file = "objc-greeter-with-optional-feature/src/main/objc/greeter_impl.m")
-	static class WithOptionalFeatureSource extends ObjCFileElement {}
+	@SourceProject("templates-objc-greeter/objc-greeter-with-optional-feature")
+	static class WithOptionalFeatureSource extends DelegatedSourceElement {}
 }

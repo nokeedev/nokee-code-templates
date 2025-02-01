@@ -1,7 +1,7 @@
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileLocation;
-import dev.gradleplugins.fixtures.sources.nativebase.ObjCFileElement;
+import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.platform.DelegatedSourceElement;
 
-@SourceFileLocation(file = "objc-compile-greeter/src/main/objc/greeter.m")
-public final class ObjectiveCCompileGreeter extends ObjCFileElement {}
+@SourceProject("templates-objc-greeter/objc-compile-greeter")
+public final class ObjectiveCCompileGreeter extends DelegatedSourceElement {}

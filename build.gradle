@@ -24,3 +24,16 @@ tasks.named('check') {
 		}
 	}
 }
+
+// Configure source-elements annotation processor
+sourceSets.main { SourceSet sourceSet ->
+	dependencies.add(sourceSet.annotationProcessorConfigurationName, 'dev.gradleplugins:source-elements-annotation-processor:latest.release')
+
+	tasks.named(sourceSet.compileJavaTaskName, JavaCompile) { task ->
+		task.options.compilerArgs.add("-AbasePath=" + project.getProjectDir())
+	}
+}
+
+repositories {
+	mavenCentral()
+}
