@@ -5,7 +5,7 @@ import dev.gradleplugins.fixtures.sources.SourceFileElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 
 import static dev.gradleplugins.fixtures.sources.java.JavaPackage.ofPackage;
 
@@ -17,7 +17,7 @@ public final class JavaNativeLoader extends SourceFileElement {
 
 	@Override
 	public SourceFile getSourceFile() {
-		SourceFile result = Elements.sourceFileOf(JavaNativeLoader.class)
+		SourceFile result = DelegatedElements.sourceFileOf(JavaNativeLoader.class)
 			.with("package", javaPackage.getName())
 			.getSourceFile();
 		return new SourceFile("java/" + javaPackage.getDirectoryLayout(), result.getName(), result.getContent());

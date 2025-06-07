@@ -18,22 +18,20 @@ package dev.nokee.platform.jni.fixtures;
 
 import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedNativeLibraryElement;
-import dev.nokee.platform.DelegatedSourceElement;
 
 @SourceProject("templates-objc-greeter/objc-greeter")
-public final class ObjectiveCGreeter extends DelegatedNativeLibraryElement {
+public final class ObjectiveCGreeter extends NativeLibraryElement.FromResource {
 	public NativeLibraryElement withFoundationFrameworkImplementation() {
 		return withSources(new WithFoundationFrameworkSource());
 	}
 
 	@SourceProject("templates-objc-greeter/objc-greeter-using-foundation-framework")
-	static class WithFoundationFrameworkSource extends DelegatedSourceElement {}
+	private static final class WithFoundationFrameworkSource extends FromResource {}
 
 	public NativeLibraryElement withOptionalFeature() {
 		return withSources(new WithOptionalFeatureSource());
 	}
 
 	@SourceProject("templates-objc-greeter/objc-greeter-with-optional-feature")
-	static class WithOptionalFeatureSource extends DelegatedSourceElement {}
+	private static final class WithOptionalFeatureSource extends FromResource {}
 }

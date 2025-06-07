@@ -1,8 +1,8 @@
 package dev.nokee.platform.nativebase.fixtures;
 
+import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
 import dev.gradleplugins.fixtures.sources.SourceElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedNativeLibraryElement;
 import dev.nokee.platform.jni.fixtures.elements.CppGreeter;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 
@@ -29,5 +29,5 @@ public final class CppGreeterLib extends GreeterImplementationAwareSourceElement
 	}
 
 	@SourceProject("templates-cpp-greeter/cpp-greeter-lib")
-	private static class CppGreetUsingGreeter extends DelegatedNativeLibraryElement {}
+	private static class CppGreetUsingGreeter extends NativeLibraryElement.FromResource {}
 }

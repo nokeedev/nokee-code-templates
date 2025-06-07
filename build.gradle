@@ -1,17 +1,27 @@
 plugins {
 	id 'java-library'
+	id 'jvm-test-suite'
+	id 'maven-publish'
 }
 
 group = 'dev.nokee.templates'
-version = '1.0'
+version = '1.0-SNAPSHOT'
 
 dependencies {
-	api 'dev.gradleplugins:gradle-fixtures-source-elements'
+	api 'dev.gradleplugins:gradle-fixtures-source-elements:2.0-milestone-1'
 }
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+publishing {
+	publications {
+		java(MavenPublication) {
+			from components.java
+		}
+	}
 }
 
 tasks.named('check') {
@@ -36,4 +46,18 @@ sourceSets.main { SourceSet sourceSet ->
 
 repositories {
 	mavenCentral()
+}
+
+testing {
+	suites {
+		test {
+			useJUnitJupiter('5.11.4')
+
+			targets.configureEach {
+				testTask.configure {
+					systemProperty 'junit.jupiter.tempdir.cleanup.mode.default', 'ON_SUCCESS'
+				}
+			}
+		}
+	}
 }

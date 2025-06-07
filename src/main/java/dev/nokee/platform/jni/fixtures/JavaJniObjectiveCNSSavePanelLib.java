@@ -6,7 +6,7 @@ import dev.gradleplugins.fixtures.sources.SourceFileElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 import dev.nokee.platform.jni.fixtures.elements.JavaGreeterJUnitTest;
 import dev.nokee.platform.jni.fixtures.elements.JavaNativeLoader;
 import dev.nokee.platform.jni.fixtures.elements.JniLibraryElement;
@@ -62,7 +62,7 @@ public final class JavaJniObjectiveCNSSavePanelLib extends SourceElement impleme
 
 		@Override
 		public SourceFile getSourceFile() {
-			SourceFile result = Elements.sourceFileOf(JavaNativeNSSavePanel.class)
+			SourceFile result = DelegatedElements.sourceFileOf(JavaNativeNSSavePanel.class)
 				.with("package", javaPackage.getName())
 				.with("libName", resourcePath + sharedLibraryBaseName)
 				.getSourceFile();
@@ -101,7 +101,7 @@ public final class JavaJniObjectiveCNSSavePanelLib extends SourceElement impleme
 
 		@Override
 		public SourceFile getSourceFile() {
-			return Elements.sourceFileOf(ObjectiveCNSSavePanelJniBinding.class)
+			return DelegatedElements.sourceFileOf(ObjectiveCNSSavePanelJniBinding.class)
 				.with("methodName", javaPackage.jniMethodName("NSSavePanel", "saveDialog"))
 				.with("jniHeader", javaPackage.jniHeader("NSSavePanel"))
 				.getSourceFile();

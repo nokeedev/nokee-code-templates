@@ -18,15 +18,13 @@ package dev.nokee.platform.jni.fixtures;
 
 import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedNativeLibraryElement;
-import dev.nokee.platform.DelegatedSourceElement;
 
 @SourceProject("templates-c-greeter/c-greeter")
-public final class CGreeter extends DelegatedNativeLibraryElement {
+public final class CGreeter extends NativeLibraryElement.FromResource {
 	public NativeLibraryElement withOptionalFeature() {
 		return withSources(new WithOptionalFeatureSource());
 	}
 
 	@SourceProject("templates-c-greeter/c-greeter-with-optional-feature")
-	static class WithOptionalFeatureSource extends DelegatedSourceElement {}
+	private static final class WithOptionalFeatureSource extends FromResource {}
 }

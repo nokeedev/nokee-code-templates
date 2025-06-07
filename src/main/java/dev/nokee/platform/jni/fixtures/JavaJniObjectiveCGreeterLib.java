@@ -5,7 +5,7 @@ import dev.gradleplugins.fixtures.sources.SourceFile;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 import dev.nokee.platform.jni.fixtures.elements.*;
 
 import static dev.gradleplugins.fixtures.sources.NativeElements.lib;
@@ -89,7 +89,7 @@ public final class JavaJniObjectiveCGreeterLib extends GreeterImplementationAwar
 
 		@Override
 		public SourceFile getSourceFile() {
-			return Elements.sourceFileOf(ObjectiveCGreeterJniBinding.class)
+			return DelegatedElements.sourceFileOf(ObjectiveCGreeterJniBinding.class)
 				.with("jniHeader", javaPackage.jniHeader("Greeter"))
 				.with("methodName", javaPackage.jniMethodName("Greeter", "sayHello"))
 				.getSourceFile();

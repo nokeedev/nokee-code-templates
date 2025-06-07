@@ -17,10 +17,8 @@
 package dev.nokee.platform.jni.fixtures.elements;
 
 import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceElements;
 import dev.gradleplugins.fixtures.sources.SourceFile;
 
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class GreeterImplementationAwareSourceElement extends SourceElement {
@@ -35,18 +33,15 @@ public abstract class GreeterImplementationAwareSourceElement extends SourceElem
 
 	public abstract ImplementationAsSubprojectElement withImplementationAsSubproject(String subprojectPath);
 
-	public static final class ImplementationAsSubprojectElement extends SourceElements {
+	public static final class ImplementationAsSubprojectElement extends SourceElement {
+		private final SourceElement delegate;
 		private final SourceElement elementUsingGreeter;
 		private final SourceElement greeter;
 
 		public ImplementationAsSubprojectElement(SourceElement elementUsingGreeter, SourceElement greeter) {
+			this.delegate = SourceElement.ofElements(elementUsingGreeter, greeter);
 			this.elementUsingGreeter = elementUsingGreeter;
 			this.greeter = greeter;
-		}
-
-		@Override
-		public List<SourceElement> getElements() {
-			return Arrays.asList(elementUsingGreeter, greeter);
 		}
 
 		public SourceElement getElementUsingGreeter() {
@@ -55,6 +50,16 @@ public abstract class GreeterImplementationAwareSourceElement extends SourceElem
 
 		public SourceElement getGreeter() {
 			return greeter;
+		}
+
+		@Override
+		public List<SourceFile> getFiles() {
+			return delegate.getFiles();
+		}
+
+		@Override
+		public ImplementationAsSubprojectElement withSourceSetName(String sourceSetName) {
+			return new ImplementationAsSubprojectElement(delegate.withSourceSetName(sourceSetName), greeter.withSourceSetName(sourceSetName));
 		}
 	}
 }

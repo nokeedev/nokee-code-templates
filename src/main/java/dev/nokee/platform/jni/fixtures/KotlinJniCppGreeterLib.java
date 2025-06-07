@@ -7,7 +7,7 @@ import dev.gradleplugins.fixtures.sources.SourceFileElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 import dev.nokee.platform.jni.fixtures.elements.*;
 
 import static dev.gradleplugins.fixtures.sources.NativeElements.lib;
@@ -86,7 +86,7 @@ public final class KotlinJniCppGreeterLib extends GreeterImplementationAwareSour
 
 		@Override
 		public SourceFile getSourceFile() {
-			SourceFile result = Elements.sourceFileOf(JavaNativeLoader.class)
+			SourceFile result = DelegatedElements.sourceFileOf(JavaNativeLoader.class)
 				.with("package", javaPackage.getName())
 				.with("libName", resourcePath + sharedLibraryBaseName)
 				.getSourceFile();
@@ -120,7 +120,7 @@ public final class KotlinJniCppGreeterLib extends GreeterImplementationAwareSour
 
 		@Override
 		public SourceFile getSourceFile() {
-			SourceFile result = Elements.sourceFileOf(KotlinNativeLoader.class)
+			SourceFile result = DelegatedElements.sourceFileOf(KotlinNativeLoader.class)
 				.with("package", javaPackage.getName())
 				.getSourceFile();
 			return new SourceFile("kotlin/" + javaPackage.getDirectoryLayout(), result.getName(), result.getContent());
@@ -139,7 +139,7 @@ public final class KotlinJniCppGreeterLib extends GreeterImplementationAwareSour
 
 		@Override
 		public SourceFile getSourceFile() {
-			SourceFile result = Elements.sourceFileOf(KotlinNativeLoader.class)
+			SourceFile result = DelegatedElements.sourceFileOf(KotlinNativeLoader.class)
 				.with("package", javaPackage.getName())
 				.getSourceFile();
 			return new SourceFile("kotlin/" + javaPackage.getDirectoryLayout(), result.getName(), result.getContent());

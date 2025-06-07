@@ -2,7 +2,6 @@ package dev.nokee.platform.nativebase.fixtures;
 
 import dev.gradleplugins.fixtures.sources.SourceElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedSourceElement;
 import dev.nokee.platform.jni.fixtures.ObjectiveCGreeter;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 
@@ -26,5 +25,5 @@ public final class ObjectiveCGreeterApp extends GreeterImplementationAwareSource
 	}
 
 	@SourceProject("templates-objc-greeter/objc-greeter-app")
-	private static class ObjectiveCMainUsesGreeter extends DelegatedSourceElement {}
+	private static final class ObjectiveCMainUsesGreeter extends FromResource {}
 }

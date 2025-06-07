@@ -19,8 +19,6 @@ package dev.nokee.platform.jni.fixtures.elements;
 
 import dev.gradleplugins.fixtures.sources.SwiftSourceElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedSourceElement;
-import dev.nokee.platform.DelegatedSwiftSourceElement;
 
 @SourceProject("templates-swift-greeter/swift-greeter")
-public final class SwiftGreeter extends DelegatedSwiftSourceElement {}
+public final class SwiftGreeter extends SwiftSourceElement.FromResource {}

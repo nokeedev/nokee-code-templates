@@ -5,7 +5,7 @@ import dev.gradleplugins.fixtures.sources.SourceFileElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 
 @SourceProject(value = "templates-jni-greeter/java-jni-greeter", includes = {"src/main/java/com/example/greeter/Greeter.java"}, properties = {
 	@SourceFileProperty(regex = "^package (com\\.example\\.greeter);$", name = "package"),
@@ -18,7 +18,7 @@ public final class JavaNativeGreeter extends SourceFileElement {
 
 	@Override
 	public SourceFile getSourceFile() {
-		SourceFile result = Elements.sourceFileOf(JavaNativeGreeter.class)
+		SourceFile result = DelegatedElements.sourceFileOf(JavaNativeGreeter.class)
 			.with("package", javaPackage.getName())
 			.with("libName", resourcePath + sharedLibraryBaseName)
 			.getSourceFile();

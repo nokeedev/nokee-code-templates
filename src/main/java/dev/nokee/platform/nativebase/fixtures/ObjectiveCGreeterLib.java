@@ -1,8 +1,8 @@
 package dev.nokee.platform.nativebase.fixtures;
 
+import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
 import dev.gradleplugins.fixtures.sources.SourceElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedNativeLibraryElement;
 import dev.nokee.platform.jni.fixtures.ObjectiveCGreeter;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 
@@ -25,5 +25,5 @@ public final class ObjectiveCGreeterLib extends GreeterImplementationAwareSource
 	}
 
 	@SourceProject("templates-objc-greeter/objc-greeter-lib")
-	private static class ObjectiveCGreetUsesGreeter extends DelegatedNativeLibraryElement {}
+	private static class ObjectiveCGreetUsesGreeter extends NativeLibraryElement.FromResource {}
 }

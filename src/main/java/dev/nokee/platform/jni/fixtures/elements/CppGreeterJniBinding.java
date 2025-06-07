@@ -4,7 +4,7 @@ import dev.gradleplugins.fixtures.sources.SourceFile;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 import dev.nokee.platform.jni.fixtures.JniBindingElement;
 
 @SourceProject(value = "templates-jni-greeter/jni-cpp-greeter", includes = {"src/main/cpp/greeter.cpp"}, properties = {
@@ -20,7 +20,7 @@ public final class CppGreeterJniBinding extends JniBindingElement {
 
 	@Override
 	public SourceFile getSourceFile() {
-		return Elements.sourceFileOf(CppGreeterJniBinding.class)
+		return DelegatedElements.sourceFileOf(CppGreeterJniBinding.class)
 			.with("methodName", javaPackage.jniMethodName("Greeter", "sayHello"))
 			.with("jniHeader", javaPackage.jniHeader("Greeter"))
 			.getSourceFile();

@@ -20,16 +20,16 @@ import dev.gradleplugins.fixtures.sources.SourceFile;
 import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
 import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.Elements;
+import dev.gradleplugins.fixtures.sources.DelegatedElements;
 
 @SourceProject(value = "templates-jni-greeter/java-jni-greeter", includes = {"src/main/headers/com_example_greeter_Greeter.h"}, properties = {
 	@SourceFileProperty(regex = "_Included_(com_example_greeter_Greeter)$", name = "headerGuard"),
 	@SourceFileProperty(regex = "Class:\\s+(com_example_greeter_Greeter)$", name = "className"),
 	@SourceFileProperty(regex = "\\s+(Java_com_example_greeter_Greeter_sayHello)", name = "methodName")
 })
-public class GreeterJniHeader {
+public final class GreeterJniHeader {
 	public SourceFile withPackage(JavaPackage javaPackage) {
-		return Elements.sourceFileOf(GreeterJniHeader.class)
+		return DelegatedElements.sourceFileOf(GreeterJniHeader.class)
 			.with("headerGuard", javaPackage.getName().replace('.', '_'))
 			.with("className", javaPackage.getName().replace('.', '_'))
 			.with("methodName", javaPackage.jniMethodName("Greeter", "sayHello"))

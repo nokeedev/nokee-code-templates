@@ -3,7 +3,6 @@ package dev.nokee.platform.nativebase.fixtures;
 import dev.gradleplugins.fixtures.sources.SourceElement;
 import dev.gradleplugins.fixtures.sources.SwiftSourceElement;
 import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.nokee.platform.DelegatedSwiftSourceElement;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 import dev.nokee.platform.jni.fixtures.elements.SwiftGreeter;
 
@@ -29,5 +28,5 @@ public final class SwiftGreeterApp extends GreeterImplementationAwareSourceEleme
 	}
 
 	@SourceProject("templates-swift-greeter/swift-greeter-app")
-	private static class SwiftMainUsesGreeter extends DelegatedSwiftSourceElement {}
+	private static class SwiftMainUsesGreeter extends SwiftSourceElement.FromResource {}
 }
