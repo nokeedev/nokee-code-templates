@@ -1,0 +1,11 @@
+plugins {
+	id 'cpp-application'
+}
+
+application {
+	dependencies {
+		implementation project(':cpp-utilities')
+		implementation project(':cpp-list') // in theory, as use the list
+		implementation project(':cpp-logger-uses-console')
+	}
+}

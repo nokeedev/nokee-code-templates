@@ -1,0 +1,15 @@
+plugins {
+	id 'cpp-library'
+}
+
+library {
+	binaries.configureEach {
+		dependencies {
+			if (targetPlatform.targetMachine.operatingSystemFamily.windows) {
+				implementation project(':cpp-windows-console-lib')
+			} else {
+				implementation project(':cpp-ansi-console-lib')
+			}
+		}
+	}
+}

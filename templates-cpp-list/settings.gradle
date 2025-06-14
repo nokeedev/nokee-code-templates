@@ -1,0 +1,7 @@
+include 'cpp-app', 'cpp-app-uses-logger'
+include 'cpp-logger-uses-console', 'cpp-ansi-console-lib', 'cpp-windows-console-lib'
+include 'cpp-list'
+include 'cpp-list-with-c-api'
+include 'cpp-list-with-cpp-template'
+include 'cpp-message', 'cpp-message-from-resources'
+include 'cpp-utilities'

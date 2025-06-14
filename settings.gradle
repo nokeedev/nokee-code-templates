@@ -6,3 +6,5 @@ includeBuild 'templates-jni-greeter'
 includeBuild 'templates-objc-greeter'
 includeBuild 'templates-objcpp-greeter'
 includeBuild 'templates-swift-greeter'
+
+includeBuild 'templates-cpp-list'
