@@ -16,13 +16,13 @@
 
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.elements.AutoElement;
+import dev.nokee.elements.ElementFileTree;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
 
-@SourceProject("templates-cpp-greeter/cpp-greeter-test")
-public final class CppGreeterTest extends SourceElement.FromResource {
-	@Override
-	public String getSourceSetName() {
-		return "test";
-	}
+@AutoElement(className = "GoogleTestGreeterTest")
+public abstract class GoogleTestGreeterTestElement extends NativeSourceElement {
+	@ElementFileTree("templates-cpp-greeter/google-test-greeter-test/src/main/cpp")
+	public abstract SourceElement getSources();
 }

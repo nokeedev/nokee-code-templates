@@ -16,8 +16,15 @@
 
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.elements.AutoElement;
+import dev.nokee.elements.ElementFileTree;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.core.SourceFile;
 
-@SourceProject("templates-cpp-greeter/cpp-compile-greeter")
-public final class CppCompileGreeter extends SourceElement.FromResource {}
+import java.util.List;
+
+@AutoElement(className = "CppCompileGreeter")
+public abstract class CppCompileGreeterElement extends SourceElement {
+	@ElementFileTree("templates-cpp-greeter/cpp-compile-greeter/src/main/cpp")
+	public abstract List<SourceFile> getFiles();
+}

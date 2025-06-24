@@ -1,17 +1,20 @@
 package dev.nokee.platform.jni.fixtures;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceFile;
+import dev.nokee.elements.core.Element;
+import dev.nokee.elements.core.ProjectElement;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.core.WorkspaceElement;
 import dev.nokee.platform.jni.fixtures.elements.ApplicationWithLibraryElement;
 import dev.nokee.platform.jni.fixtures.elements.JavaMainUsesGreeter;
+import dev.nokee.platform.jni.fixtures.elements.JavaMainUsesGreeterElement;
 
-import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 // FIXME(elements)
 public final class GreeterAppWithJniLibrary implements ApplicationWithLibraryElement {
 	private final JavaJniCppGreeterLib library;
-	private final JavaMainUsesGreeter application = new JavaMainUsesGreeter();
+	private final JavaMainUsesGreeterElement application = new JavaMainUsesGreeter();
 	private final String resourcePath;
 	private final String projectName;
 
@@ -29,30 +32,37 @@ public final class GreeterAppWithJniLibrary implements ApplicationWithLibraryEle
 		return application.getExpectedOutput();
 	}
 
-	public SourceElement withLibraryAsSubproject(String libraryProjectName) {
+	public WorkspaceElement withLibraryAsSubproject(String libraryProjectName) {
 		if (resourcePath.isEmpty()) {
 			return newLibraryAsSubproject(libraryProjectName, projectName + "/");
 		}
 		return newLibraryAsSubproject(libraryProjectName, resourcePath);
 	}
 
-	private SourceElement newLibraryAsSubproject(String libraryProjectName, String resourcePath) {
-		return new SourceElement() {
+	// FIXME
+	private WorkspaceElement newLibraryAsSubproject(String libraryProjectName, String resourcePath) {
+		return new WorkspaceElement() {
 			@Override
-			public List<SourceFile> getFiles() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void writeToProject(Path projectDir) {
-				library.withResourcePath(resourcePath).withProjectName(libraryProjectName).writeToProject(projectDir.resolve(libraryProjectName));
-				application.writeToProject(projectDir);
-			}
-
-			SourceElement withResourcePath(String newResourcePath) {
-				return newLibraryAsSubproject(libraryProjectName, newResourcePath);
+			public List<ProjectElement> getProjects() {
+				return Arrays.asList(ProjectElement.ofMain(library.withResourcePath(resourcePath).withProjectName(libraryProjectName)), ProjectElement.ofMain(application));
 			}
 		};
+//		return new SourceElement() {
+//			@Override
+//			public List<SourceFile> getFiles() {
+//				throw new UnsupportedOperationException();
+//			}
+//
+//			@Override
+//			public void writeToProject(Path projectDir) {
+//				.writeToProject(projectDir.resolve(libraryProjectName));
+//				application.writeToProject(projectDir);
+//			}
+//
+//			SourceElement withResourcePath(String newResourcePath) {
+//				return newLibraryAsSubproject(libraryProjectName, newResourcePath);
+//			}
+//		};
 	}
 
 	public GreeterAppWithJniLibrary withResourcePath(String resourcePath) {
@@ -60,8 +70,8 @@ public final class GreeterAppWithJniLibrary implements ApplicationWithLibraryEle
 	}
 
 	@Override
-	public SourceElement getLibrary() {
-		return library;
+	public Element getLibrary() {
+		return library.getMainElement();
 	}
 
 	@Override

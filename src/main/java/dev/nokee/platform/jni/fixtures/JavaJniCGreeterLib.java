@@ -1,22 +1,23 @@
 package dev.nokee.platform.jni.fixtures;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceFile;
-import dev.gradleplugins.fixtures.sources.annotations.SourceFileProperty;
-import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
-import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.gradleplugins.fixtures.sources.DelegatedElements;
+import dev.nokee.elements.AutoElement;
+import dev.nokee.elements.ElementFileTree;
+import dev.nokee.elements.core.*;
+import dev.nokee.elements.nativebase.NativeElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
 import dev.nokee.platform.jni.fixtures.elements.*;
 
-import static dev.gradleplugins.fixtures.sources.NativeElements.lib;
-import static dev.gradleplugins.fixtures.sources.NativeElements.subproject;
-import static dev.gradleplugins.fixtures.sources.java.JavaPackage.ofPackage;
+import java.util.function.UnaryOperator;
 
-public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceElement implements JniLibraryElement {
-	private final CGreeterJniBinding nativeBindings;
+import static dev.nokee.elements.core.JavaPackage.ofPackage;
+import static dev.nokee.elements.core.SourceElement.ofElements;
+import static dev.nokee.platform.jni.fixtures.elements.JavaUtils.replace;
+
+public final class JavaJniCGreeterLib extends ProjectElement implements GreeterImplementationAwareSourceElement, JniLibraryElement {
+	private final CGreeterJniBindingElement nativeBindings;
 	private final SourceElement jvmBindings;
 	private final SourceElement jvmImplementation;
-	private final CGreeter nativeImplementation;
+	private final CGreeterElement nativeImplementation;
 
 	@Override
 	public SourceElement getJvmSources() {
@@ -24,13 +25,24 @@ public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceEl
 	}
 
 	@Override
-	public SourceElement getNativeSources() {
-		return ofElements(nativeBindings, nativeImplementation);
+	public NativeElement getNativeSources() {
+		return NativeSourceElement.ofElements(NativeSourceElement.ofSources(nativeBindings), nativeImplementation.asImplementation());
 	}
 
 	@Override
-	public SourceElement withJUnitTest() {
-		return ofElements(this, new JavaGreeterJUnitTest());
+	public Element getMainElement() {
+		return new Element() {
+			@Override
+			public void accept(Visitor visitor) {
+				getJvmSources().accept(visitor);
+				getNativeSources().accept(visitor);
+			}
+		};
+	}
+
+	@Override
+	public ProjectElement withJUnitTest() {
+		return withTest(new JavaGreeterJUnitTest());
 	}
 
 	public JavaJniCGreeterLib(String projectName) {
@@ -38,10 +50,10 @@ public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceEl
 	}
 
 	private JavaJniCGreeterLib(JavaPackage javaPackage, String sharedLibraryBaseName) {
-		this(new JavaNativeGreeter(javaPackage, sharedLibraryBaseName), new CGreeterJniBinding(javaPackage), new JavaNativeLoader(javaPackage), new CGreeter());
+		this(new JavaNativeGreeter().withPackage(javaPackage).withSharedLibraryBaseName(sharedLibraryBaseName).withResourcePath(""), new CGreeterJniBinding().withPackage(javaPackage), new JavaNativeLoader().withPackage(javaPackage), new CGreeter());
 	}
 
-	private JavaJniCGreeterLib(JavaNativeGreeter jvmBindings, CGreeterJniBinding nativeBindings, JavaNativeLoader jvmImplementation, CGreeter nativeImplementation) {
+	private JavaJniCGreeterLib(JavaNativeGreeterElement jvmBindings, CGreeterJniBindingElement nativeBindings, JavaNativeLoaderElement jvmImplementation, CGreeterElement nativeImplementation) {
 		this.jvmBindings = jvmBindings;
 		this.nativeBindings = nativeBindings;
 		this.jvmImplementation = jvmImplementation;
@@ -54,7 +66,7 @@ public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceEl
 	}
 
 	@Override
-	public SourceElement getGreeter() {
+	public NativeElement getGreeter() {
 		return nativeImplementation;
 	}
 
@@ -62,37 +74,54 @@ public final class JavaJniCGreeterLib extends GreeterImplementationAwareSourceEl
 		return ofElements(getJvmSources(), nativeBindings);
 	}
 
-	public SourceElement withOptionalFeature() {
-		return ofElements(getJvmSources(),
-			ofElements(nativeBindings, nativeImplementation.withOptionalFeature()));
-	}
+	// FIXME
+//	public SourceElement withOptionalFeature() {
+//		return ofElements(getJvmSources(),
+//			ofElements(nativeBindings, nativeImplementation.withOptionalFeature()));
+//	}
 
 	@Override
-	public ImplementationAsSubprojectElement withImplementationAsSubproject(String subprojectPath) {
-		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), nativeImplementation.as(lib()).as(subproject(subprojectPath)));
+	public ImplementationAsSubprojectElement withImplementationAsSubproject() {
+		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), nativeImplementation);
 	}
 
-	@SourceProject(value = "templates-jni-greeter/jni-c-greeter", includes = {"src/main/c/greeter.c"}, properties = {
-		@SourceFileProperty(regex = "^#include\\s+\"(com_example_greeter_Greeter.h)\"$", name = "jniHeader"),
-		@SourceFileProperty(regex = "\\s+(Java_com_example_greeter_Greeter_sayHello)\\(", name = "methodName")
-	})
-	private static class CGreeterJniBinding extends JniBindingElement {
+	@AutoElement(className = "CGreeterJniBinding")
+	static abstract class CGreeterJniBindingElement extends JniBindingElement {
 		private final JavaPackage javaPackage;
 
-		public CGreeterJniBinding(JavaPackage javaPackage) {
+		public CGreeterJniBindingElement() {
+			this(JavaPackage.ofPackage("com.example.greeter"));
+		}
+
+		public CGreeterJniBindingElement(JavaPackage javaPackage) {
 			this.javaPackage = javaPackage;
 		}
 
-		@Override
-		public SourceFile getSourceFile() {
-			return DelegatedElements.sourceFileOf(CGreeterJniBinding.class)
-				.with("jniHeader", javaPackage.jniHeader("Greeter"))
-				.with("methodName", javaPackage.jniMethodName("Greeter", "sayHello"))
-				.getSourceFile();
+		@ElementFileTree(value = "templates-jni-greeter/jni-c-greeter/src/main/c", includes = {"greeter.c"})
+		public abstract SourceFile getSourceFile();
+
+		public CGreeterJniBindingElement withPackage(JavaPackage javaPackage) {
+			return new CGreeterJniBindingElement(javaPackage) {
+				@Override
+				public SourceFile getSourceFile() {
+					SourceFile sourceFile = CGreeterJniBindingElement.this.getSourceFile();
+					return sourceFile
+						.withContent(jniHeader(javaPackage))
+						.withContent(methodName(javaPackage));
+				}
+			};
+		}
+
+		private static UnaryOperator<String> methodName(JavaPackage javaPackage) {
+			return replace("\\s+(Java_com_example_greeter_Greeter_sayHello)\\(", javaPackage.jniMethodName("Greeter", "sayHello"));
+		}
+
+		private static UnaryOperator<String> jniHeader(JavaPackage javaPackage) {
+			return replace("^#include\\s+\"(com_example_greeter_Greeter.h)\"$", javaPackage.jniHeader("Greeter"));
 		}
 
 		@Override
-		public SourceFile getJniGeneratedHeaderFile() {
+		public SourceFileElement getJniGeneratedHeaderFile() {
 			return new GreeterJniHeader().withPackage(javaPackage);
 		}
 	}

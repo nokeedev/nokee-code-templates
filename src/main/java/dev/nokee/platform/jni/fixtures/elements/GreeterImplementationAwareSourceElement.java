@@ -16,50 +16,41 @@
 
 package dev.nokee.platform.jni.fixtures.elements;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceFile;
+import dev.nokee.elements.core.Element;
+import dev.nokee.elements.core.ProjectElement;
+import dev.nokee.elements.core.WorkspaceElement;
 
+import java.util.Arrays;
 import java.util.List;
 
-public abstract class GreeterImplementationAwareSourceElement extends SourceElement {
-	@Override
-	public List<SourceFile> getFiles() {
-		return ofElements(getElementUsingGreeter(), getGreeter()).getFiles();
-	}
+public interface GreeterImplementationAwareSourceElement {
+	Element getElementUsingGreeter();
 
-	public abstract SourceElement getElementUsingGreeter();
+	Element getGreeter();
 
-	public abstract SourceElement getGreeter();
+	ImplementationAsSubprojectElement withImplementationAsSubproject();
 
-	public abstract ImplementationAsSubprojectElement withImplementationAsSubproject(String subprojectPath);
 
-	public static final class ImplementationAsSubprojectElement extends SourceElement {
-		private final SourceElement delegate;
-		private final SourceElement elementUsingGreeter;
-		private final SourceElement greeter;
+	final class ImplementationAsSubprojectElement extends WorkspaceElement {
+		private final ProjectElement elementUsingGreeter;
+		private final ProjectElement greeter;
 
-		public ImplementationAsSubprojectElement(SourceElement elementUsingGreeter, SourceElement greeter) {
-			this.delegate = SourceElement.ofElements(elementUsingGreeter, greeter);
-			this.elementUsingGreeter = elementUsingGreeter;
-			this.greeter = greeter;
+		public ImplementationAsSubprojectElement(Element elementUsingGreeter, Element greeter) {
+			this.elementUsingGreeter = ProjectElement.ofMain(elementUsingGreeter);
+			this.greeter = ProjectElement.ofMain(greeter);
 		}
 
-		public SourceElement getElementUsingGreeter() {
+		public ProjectElement getElementUsingGreeter() {
 			return elementUsingGreeter;
 		}
 
-		public SourceElement getGreeter() {
+		public ProjectElement getGreeter() {
 			return greeter;
 		}
 
 		@Override
-		public List<SourceFile> getFiles() {
-			return delegate.getFiles();
-		}
-
-		@Override
-		public ImplementationAsSubprojectElement withSourceSetName(String sourceSetName) {
-			return new ImplementationAsSubprojectElement(delegate.withSourceSetName(sourceSetName), greeter.withSourceSetName(sourceSetName));
+		public List<ProjectElement> getProjects() {
+			return Arrays.asList(getElementUsingGreeter(), getGreeter());
 		}
 	}
 }

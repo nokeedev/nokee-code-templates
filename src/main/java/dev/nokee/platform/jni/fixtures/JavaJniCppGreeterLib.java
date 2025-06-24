@@ -1,24 +1,21 @@
 package dev.nokee.platform.jni.fixtures;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.java.JavaPackage;
-import dev.nokee.platform.jni.fixtures.elements.CppGreeter;
-import dev.nokee.platform.jni.fixtures.elements.CppGreeterJniBinding;
-import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
-import dev.nokee.platform.jni.fixtures.elements.JavaGreeterJUnitTest;
-import dev.nokee.platform.jni.fixtures.elements.JavaNativeGreeter;
-import dev.nokee.platform.jni.fixtures.elements.JavaNativeLoader;
-import dev.nokee.platform.jni.fixtures.elements.JniLibraryElement;
+import dev.nokee.elements.core.*;
+import dev.nokee.elements.nativebase.NativeElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
+import dev.nokee.platform.jni.fixtures.elements.*;
 
-import static dev.gradleplugins.fixtures.sources.NativeElements.lib;
-import static dev.gradleplugins.fixtures.sources.NativeElements.subproject;
-import static dev.gradleplugins.fixtures.sources.java.JavaPackage.ofPackage;
+import java.util.Arrays;
+import java.util.List;
 
-public final class JavaJniCppGreeterLib extends GreeterImplementationAwareSourceElement implements JniLibraryElement {
-	private final CppGreeterJniBinding nativeBindings;
-	private final JavaNativeGreeter jvmBindings;
+import static dev.nokee.elements.core.JavaPackage.ofPackage;
+import static dev.nokee.elements.core.SourceElement.ofElements;
+
+public final class JavaJniCppGreeterLib extends ProjectElement implements GreeterImplementationAwareSourceElement, JniLibraryElement {
+	private final CppGreeterJniBindingElement nativeBindings;
+	private final JavaNativeGreeterElement jvmBindings;
 	private final SourceElement jvmImplementation;
-	private final CppGreeter nativeImplementation;
+	private final CppGreeterElement nativeImplementation;
 	private /*final*/ String projectName;
 	private /*final*/ String resourcePath;
 
@@ -28,13 +25,24 @@ public final class JavaJniCppGreeterLib extends GreeterImplementationAwareSource
 	}
 
 	@Override
-	public SourceElement getNativeSources() {
-		return ofElements(nativeBindings, nativeImplementation);
+	public NativeElement getNativeSources() {
+		return NativeSourceElement.ofElements(NativeSourceElement.ofSources(nativeBindings), nativeImplementation.asImplementation());
 	}
 
 	@Override
-	public SourceElement withJUnitTest() {
-		return ofElements(this, new JavaGreeterJUnitTest());
+	public Element getMainElement() {
+		return new Element() {
+			@Override
+			public void accept(Visitor visitor) {
+				getJvmSources().accept(visitor);
+				getNativeSources().accept(visitor);
+			}
+		};
+	}
+
+	@Override
+	public ProjectElement withJUnitTest() {
+		return withTest(new JavaGreeterJUnitTest());
 	}
 
 	public JavaJniCppGreeterLib(String projectName) {
@@ -48,10 +56,10 @@ public final class JavaJniCppGreeterLib extends GreeterImplementationAwareSource
 	}
 
 	private JavaJniCppGreeterLib(JavaPackage javaPackage, String sharedLibraryBaseName, String resourcePath) {
-		this(new JavaNativeGreeter(javaPackage, sharedLibraryBaseName, resourcePath), new CppGreeterJniBinding(javaPackage), new JavaNativeLoader(javaPackage), new CppGreeter());
+		this(new JavaNativeGreeter().withPackage(javaPackage).withSharedLibraryBaseName(sharedLibraryBaseName).withResourcePath(resourcePath), new CppGreeterJniBinding().withPackage(javaPackage), new JavaNativeLoader().withPackage(javaPackage), new CppGreeter());
 	}
 
-	private JavaJniCppGreeterLib(JavaNativeGreeter jvmBindings, CppGreeterJniBinding nativeBindings, JavaNativeLoader jvmImplementation, CppGreeter nativeImplementation) {
+	private JavaJniCppGreeterLib(JavaNativeGreeterElement jvmBindings, CppGreeterJniBindingElement nativeBindings, JavaNativeLoaderElement jvmImplementation, CppGreeterElement nativeImplementation) {
 		this.jvmBindings = jvmBindings;
 		this.nativeBindings = nativeBindings;
 		this.jvmImplementation = jvmImplementation;
@@ -64,7 +72,7 @@ public final class JavaJniCppGreeterLib extends GreeterImplementationAwareSource
 	}
 
 	@Override
-	public SourceElement getGreeter() {
+	public NativeElement getGreeter() {
 		return nativeImplementation;
 	}
 
@@ -81,32 +89,72 @@ public final class JavaJniCppGreeterLib extends GreeterImplementationAwareSource
 		return ofElements(getJvmSources(), nativeBindings);
 	}
 
-	public SourceElement withoutJvmImplementation() {
-		return ofElements(jvmBindings, ofElements(nativeBindings, nativeImplementation));
+	public Element withoutJvmImplementation() {
+		return NativeSourceElement.ofElements(NativeSourceElement.ofSources(jvmBindings), NativeSourceElement.ofSources(nativeBindings), nativeImplementation);
 	}
 
-	public SourceElement withImplementationAsSubprojects() {
-		return ofElements(
-			jvmBindings.withSharedLibraryBaseName("cpp-jni-greeter").as(subproject("java-jni-greeter")),
-			nativeBindings.withJniGeneratedHeader().as(subproject("cpp-jni-greeter")),
-			jvmImplementation.as(subproject("java-loader")),
-			nativeImplementation.asLib().as(subproject("cpp-greeter"))
-		);
+	public WorkspaceElement withImplementationAsSubprojects() {
+		return new WorkspaceElement() {
+			@Override
+			public List<ProjectElement> getProjects() {
+				return Arrays.asList(
+					new JavaJniGreeterProject() {
+						@Override
+						public Element getMainElement() {
+							return jvmBindings.withSharedLibraryBaseName("cpp-jni-greeter");
+						}
+					},
+					new CppJniGreeterProject() {
+
+						@Override
+						public Element getMainElement() {
+							return nativeBindings.withJniGeneratedHeader();
+						}
+					},
+					new JavaLoaderProject() {
+						@Override
+						public Element getMainElement() {
+							return jvmImplementation;
+						}
+					},
+					new CppGreeterProject() {
+						@Override
+						public Element getMainElement() {
+							return nativeImplementation;
+						}
+					}
+				);
+			}
+		};
 	}
 
-	public SourceElement withOptionalFeature() {
-		return ofElements(getJvmSources(),
-			ofElements(nativeBindings, nativeImplementation.withOptionalFeature()));
-	}
+	// "java-jni-greeter"
+	public static abstract class JavaJniGreeterProject extends ProjectElement {}
+
+	// "cpp-jni-greeter"
+	public static abstract class CppJniGreeterProject extends ProjectElement {}
+
+	// "java-loader"
+	public static abstract class JavaLoaderProject extends ProjectElement {}
+
+	// "cpp-greeter"
+	public static abstract class CppGreeterProject extends ProjectElement {}
+
+	// FIXME
+//	public SourceElement withOptionalFeature() {
+//		return ofElements(getJvmSources(),
+//			ofElements(nativeBindings, nativeImplementation.withOptionalFeature()));
+//	}
 
 	@Override
-	public ImplementationAsSubprojectElement withImplementationAsSubproject(String subprojectPath) {
-		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), nativeImplementation.as(lib()).as(subproject(subprojectPath)));
+	public ImplementationAsSubprojectElement withImplementationAsSubproject() {
+		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), nativeImplementation);
 	}
 
-	// withoutNativeImplementation().withJUnitTest()
-	public SourceElement asSample() {
-		return ofElements(withoutNativeImplementation(), new JavaGreeterJUnitTest());
-	}
+	// FIXME
+//	// withoutNativeImplementation().withJUnitTest()
+//	public SourceElement asSample() {
+//		return ofElements(withoutNativeImplementation(), new JavaGreeterJUnitTest());
+//	}
 }
 

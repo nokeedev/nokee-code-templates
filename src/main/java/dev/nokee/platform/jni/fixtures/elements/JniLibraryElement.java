@@ -1,31 +1,27 @@
 package dev.nokee.platform.jni.fixtures.elements;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceFile;
-import dev.gradleplugins.fixtures.sources.SourceFileElement;
+import dev.nokee.elements.core.ProjectElement;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.nativebase.NativeElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
 
 import java.nio.file.Path;
-
-import static dev.gradleplugins.fixtures.sources.SourceElement.ofElements;
 
 public interface JniLibraryElement {
 	SourceElement getJvmSources();
 
-	SourceElement getNativeSources();
+	NativeElement getNativeSources();
 
-	SourceElement withJUnitTest();
+	ProjectElement withJUnitTest();
 
-	default void writeToProject(Path projectDir) {
-		ofElements(getJvmSources(), getNativeSources()).writeToProject(projectDir);
-	}
-
-	default SourceElement withResources() {
-		final SourceFileElement newResourceElement = new SourceFileElement() {
-			@Override
-			public SourceFile getSourceFile() {
-				return sourceFile("resources", "foo.txt", "");
-			}
-		};
-		return ofElements(getJvmSources(), newResourceElement, getNativeSources());
-	}
+	// FIXME
+//	default SourceElement withResources() {
+//		final SourceFileElement newResourceElement = new SourceFileElement() {
+//			@Override
+//			public SourceFile getSourceFile() {
+//				return sourceFile("resources", "foo.txt", "");
+//			}
+//		};
+//		return ofElements(getJvmSources(), newResourceElement, getNativeSources());
+//	}
 }

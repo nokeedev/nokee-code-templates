@@ -16,30 +16,24 @@
 
 package dev.nokee.platform.jni.fixtures;
 
-import dev.gradleplugins.fixtures.sources.NativeSourceFileElement;
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.SourceFile;
-import dev.gradleplugins.fixtures.sources.SourceFileElement;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.core.SourceFileElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
 
 // Defined as a single native source with an optional generated headers
 public abstract class JniBindingElement extends SourceFileElement {
-	public abstract SourceFile getJniGeneratedHeaderFile();
+	public abstract SourceFileElement getJniGeneratedHeaderFile();
 
-	public NativeSourceFileElement withJniGeneratedHeader() {
-		return new NativeSourceFileElement() {
+	public NativeSourceElement withJniGeneratedHeader() {
+		return new NativeSourceElement() {
 			@Override
-			public SourceFileElement getHeader() {
-				return ofFile(getJniGeneratedHeaderFile());
+			public SourceElement getHeaders() {
+				return getJniGeneratedHeaderFile();
 			}
 
 			@Override
-			public SourceFileElement getSource() {
-				return ofFile(getSourceFile());
-			}
-
-			@Override
-			public String getSourceSetName() {
-				return JniBindingElement.this.getSourceSetName();
+			public SourceElement getSources() {
+				return JniBindingElement.this;
 			}
 		};
 	}

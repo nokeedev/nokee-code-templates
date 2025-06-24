@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package dev.nokee.platform.jni.fixtures;
+package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.NativeLibraryElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.elements.AutoElement;
+import dev.nokee.elements.ElementFileTree;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
 
-@SourceProject("templates-c-greeter/c-greeter")
-public final class CGreeter extends NativeLibraryElement.FromResource {
-	public NativeLibraryElement withOptionalFeature() {
-		return withSources(new WithOptionalFeatureSource());
-	}
+@AutoElement(className = "CppGreeterTest")
+public abstract class CppGreeterTestElement extends NativeSourceElement {
+	@ElementFileTree("templates-cpp-greeter/cpp-greeter-test/src/main/headers")
+	public abstract SourceElement getHeaders();
 
-	@SourceProject("templates-c-greeter/c-greeter-with-optional-feature")
-	private static final class WithOptionalFeatureSource extends FromResource {}
+	@ElementFileTree("templates-cpp-greeter/cpp-greeter-test/src/main/cpp")
+	public abstract SourceElement getSources();
 }

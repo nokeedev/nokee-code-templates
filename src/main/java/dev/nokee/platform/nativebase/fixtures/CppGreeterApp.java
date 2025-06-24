@@ -16,34 +16,46 @@
 
 package dev.nokee.platform.nativebase.fixtures;
 
-import dev.gradleplugins.fixtures.sources.SourceElement;
-import dev.gradleplugins.fixtures.sources.annotations.SourceProject;
+import dev.nokee.elements.AutoElement;
+import dev.nokee.elements.ElementFileTree;
+import dev.nokee.elements.core.ProjectElement;
+import dev.nokee.elements.core.SourceElement;
+import dev.nokee.elements.core.SourceFile;
+import dev.nokee.elements.core.SourceFileElement;
+import dev.nokee.elements.nativebase.NativeElement;
+import dev.nokee.elements.nativebase.NativeLibraryElement;
+import dev.nokee.elements.nativebase.NativeSourceElement;
 import dev.nokee.platform.jni.fixtures.elements.CppGreeter;
 import dev.nokee.platform.jni.fixtures.elements.GreeterImplementationAwareSourceElement;
 
-import static dev.gradleplugins.fixtures.sources.NativeElements.lib;
-import static dev.gradleplugins.fixtures.sources.NativeElements.subproject;
-
-public final class CppGreeterApp extends GreeterImplementationAwareSourceElement {
+public final class CppGreeterApp extends ProjectElement implements GreeterImplementationAwareSourceElement {
 	@Override
-	public SourceElement getElementUsingGreeter() {
-		return new CppMainUsesGreeter();
+	public NativeElement getMainElement() {
+		return NativeSourceElement.ofElements(getGreeter().asImplementation(), NativeSourceElement.ofSources(getElementUsingGreeter()));
 	}
 
 	@Override
-	public SourceElement getGreeter() {
+	public SourceElement getElementUsingGreeter() {
+		return new CppGreeterApp_CppMainUsesGreeterElement();
+	}
+
+	@Override
+	public NativeLibraryElement getGreeter() {
 		return new CppGreeter();
 	}
 
 	@Override
-	public ImplementationAsSubprojectElement withImplementationAsSubproject(String subprojectPath) {
-		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), getGreeter().as(lib()).as(subproject(subprojectPath)));
+	public ImplementationAsSubprojectElement withImplementationAsSubproject() {
+		return new ImplementationAsSubprojectElement(getElementUsingGreeter(), new CppGreeter());
 	}
 
-	public SourceElement withGenericTestSuite() {
-		return ofElements(getElementUsingGreeter(), getGreeter(), new CppGreeterTest());
+	public ProjectElement withGenericTestSuite() {
+		return withTest(new CppGreeterTest());
 	}
 
-	@SourceProject("templates-cpp-greeter/cpp-greeter-app")
-	private static final class CppMainUsesGreeter extends FromResource {}
+	@AutoElement
+	static abstract class CppMainUsesGreeter extends SourceFileElement {
+		@ElementFileTree("templates-cpp-greeter/cpp-greeter-app/src/main/cpp")
+		public abstract SourceFile getSourceFile();
+	}
 }
