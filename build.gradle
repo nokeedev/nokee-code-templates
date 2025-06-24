@@ -7,6 +7,10 @@ plugins {
 group = 'dev.nokee.templates'
 version = '1.0-SNAPSHOT'
 
+repositories {
+	mavenCentral()
+}
+
 dependencies {
 	api 'dev.gradleplugins:gradle-fixtures-source-elements:2.0-milestone-1'
 	api 'dev.gradleplugins:elements:2.0-milestone-1'
