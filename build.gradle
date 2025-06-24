@@ -1,7 +1,6 @@
 plugins {
 	id 'java-library'
 	id 'java-gradle-plugin'
-	id 'jvm-test-suite'
 	id 'maven-publish'
 }
 
@@ -52,23 +51,5 @@ sourceSets.main { SourceSet sourceSet ->
 
 	tasks.named(sourceSet.compileJavaTaskName, JavaCompile) { task ->
 		task.options.compilerArgs.add("-AbasePath=" + project.getProjectDir())
-	}
-}
-
-repositories {
-	mavenCentral()
-}
-
-testing {
-	suites {
-		test {
-			useJUnitJupiter('5.11.4')
-
-			targets.configureEach {
-				testTask.configure {
-					systemProperty 'junit.jupiter.tempdir.cleanup.mode.default', 'ON_SUCCESS'
-				}
-			}
-		}
 	}
 }
