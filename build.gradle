@@ -1,5 +1,6 @@
 plugins {
 	id 'java-library'
+	id 'java-gradle-plugin'
 	id 'jvm-test-suite'
 	id 'maven-publish'
 }
@@ -15,6 +16,15 @@ dependencies {
 java {
 	sourceCompatibility = JavaVersion.VERSION_11
 	targetCompatibility = JavaVersion.VERSION_11
+}
+
+gradlePlugin {
+	plugins {
+		templates {
+			id = "nokeebuild.code-templates"
+			implementationClass = "dev.nokee.templates.plugins.CodeTemplatesPlugin"
+		}
+	}
 }
 
 publishing {
