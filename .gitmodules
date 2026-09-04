@@ -1,3 +1,0 @@
-[submodule "source-elements"]
-	path = gradle/modules/source-elements
-	url = git@github.com:gradle-plugins/source-elements.git
