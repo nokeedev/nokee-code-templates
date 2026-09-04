@@ -1,6 +1,12 @@
-rootProject.name = 'nokee-code-templates'
+pluginManagement {
+	apply from: 'https://raw.githubusercontent.com/nokeedev/nokeebuild-plugins/refs/heads/main/init.gradle'
+}
 
-includeBuild 'gradle/modules/source-elements'
+plugins {
+	id 'nokeebuild.source-control-management'
+}
+
+rootProject.name = 'nokee-code-templates'
 
 includeBuild 'templates-c-greeter'
 includeBuild 'templates-cpp-greeter'
@@ -10,3 +16,7 @@ includeBuild 'templates-objcpp-greeter'
 includeBuild 'templates-swift-greeter'
 
 includeBuild 'templates-cpp-list'
+
+sourceControlManagement {
+	gitRepository(uri("https://github.com/gradle-plugins/source-elements.git"))
+}
